@@ -1,0 +1,12 @@
+logging:
+  level:
+    org.springframework.web: ERROR
+    com.example.springboot: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} ${PID:- } [%15.15t] %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %5level %logger{15} - %msg%n"
+file: ./logs/application.log
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER

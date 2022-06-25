@@ -1,0 +1,39 @@
+plugins {
+	id 'org.springframework.boot' version '2.6.9'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.11'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
+
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+
+	compileOnly 'org.projectlombok:lombok:1.18.20'
+	annotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+	testCompileOnly 'org.projectlombok:lombok:1.18.20'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
+}
+
+test {
+	useJUnitPlatform()
+}
+
+// the default 'jar' task will create non-fat jar; use bootJar instead 
+/*
+jar {
+	archiveFileName = "springboot-gradle.jar"
+}
+*/
