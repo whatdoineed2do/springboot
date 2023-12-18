@@ -1,12 +1,15 @@
 plugins {
-	id 'org.springframework.boot' version '2.6.9'
+	id 'org.springframework.boot' version '2.7.18'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id "com.palantir.docker" version "0.22.1"
 	id 'java'
 }
 
 group = 'com.example'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '1.11'
+version = '0.0.1'
+// sourceCompatibility = '1.11'
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 repositories {
 	mavenCentral()
@@ -36,4 +39,19 @@ test {
 jar {
 	archiveFileName = "springboot-gradle.jar"
 }
+application {
+    mainClassName = ''
+}
 */
+
+bootJar {
+    archiveFileName = "${project.name}.jar"
+    launchScript {
+        properties "mode": "run"
+    }
+}
+
+docker {
+	name "${project.name}:${project.version}"
+	files '${project.name}.jar'
+}
