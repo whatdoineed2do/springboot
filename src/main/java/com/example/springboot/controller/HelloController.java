@@ -1,6 +1,6 @@
 package com.example.springboot.controller;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import com.example.springboot.controller.exception.BarException;
 import com.example.springboot.controller.exception.FooException;

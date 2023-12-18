@@ -2,13 +2,15 @@ package com.example.springboot.controller;
 
 // see https://www.baeldung.com/global-error-handler-in-a-spring-rest-api
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.example.springboot.controller.exception.BarException;
+import com.example.springboot.controller.exception.FooException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -25,9 +27,8 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import com.example.springboot.controller.exception.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Log4j2
 @ControllerAdvice
@@ -37,7 +38,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex,
                                                                   final HttpHeaders headers,
-                                                                  final HttpStatus status,
+                                                                  final HttpStatusCode status,
                                                                   final WebRequest request)
     {
         log.info("error: " + ex.getClass().getName());
@@ -56,7 +57,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler
     @Override
     protected ResponseEntity<Object> handleBindException(final BindException ex,
                                                          final HttpHeaders headers,
-                                                         final HttpStatus status,
+                                                         final HttpStatusCode status,
                                                          final WebRequest request)
     {
         log.info("error: " + ex.getClass().getName());
@@ -75,7 +76,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler
     @Override
     protected ResponseEntity<Object> handleTypeMismatch(final TypeMismatchException ex,
                                                         final HttpHeaders headers,
-                                                        final HttpStatus status,
+                                                        final HttpStatusCode status,
                                                         final WebRequest request)
     {
         log.info("error: " + ex.getClass().getName());
@@ -89,7 +90,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler
     @Override
     protected ResponseEntity<Object> handleMissingServletRequestPart(final MissingServletRequestPartException ex,
                                                                      final HttpHeaders headers,
-                                                                     final HttpStatus status,
+                                                                     final HttpStatusCode status,
                                                                      final WebRequest request)
     {
         log.info("error: " + ex.getClass().getName());
@@ -102,7 +103,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler
     @Override
     protected ResponseEntity<Object> handleMissingServletRequestParameter(final MissingServletRequestParameterException ex,
                                                                           final HttpHeaders headers,
-                                                                          final HttpStatus status,
+                                                                          final HttpStatusCode status,
                                                                           final WebRequest request)
     {
         log.info("error: " + ex.getClass().getName());
@@ -143,7 +144,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(final NoHandlerFoundException ex,
                                                                    final HttpHeaders headers,
-                                                                   final HttpStatus status,
+                                                                   final HttpStatusCode status,
                                                                    final WebRequest request)
     {
         log.info("error: " + ex.getClass().getName());
@@ -157,7 +158,10 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler
     // 405
 
     @Override
-    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(final HttpRequestMethodNotSupportedException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
+    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(final HttpRequestMethodNotSupportedException ex,
+                                                                         final HttpHeaders headers,
+                                                                         final HttpStatusCode status,
+                                                                         final WebRequest request) {
         log.info("error: " + ex.getClass().getName());
         //
         final StringBuilder builder = new StringBuilder();
@@ -172,7 +176,10 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler
     // 415
 
     @Override
-    protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(final HttpMediaTypeNotSupportedException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
+    protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(final HttpMediaTypeNotSupportedException ex,
+                                                                     final HttpHeaders headers,
+                                                                     final HttpStatusCode status,
+                                                                     final WebRequest request) {
         log.info("error: " + ex.getClass().getName());
         //
         final StringBuilder builder = new StringBuilder();
