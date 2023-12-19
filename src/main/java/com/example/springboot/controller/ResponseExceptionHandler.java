@@ -6,7 +6,7 @@ import com.example.springboot.controller.exception.BarException;
 import com.example.springboot.controller.exception.FooException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,7 +30,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.ArrayList;
 import java.util.List;
 
-@Log4j2
+@Slf4j
 @ControllerAdvice
 public class ResponseExceptionHandler extends ResponseEntityExceptionHandler
 {

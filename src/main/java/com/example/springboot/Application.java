@@ -1,16 +1,16 @@
 package com.example.springboot;
 
-import java.util.Arrays;
-
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
+import java.util.Arrays;
 
-@Log4j2
+
+@Slf4j
 @SpringBootApplication
 public class Application {
 

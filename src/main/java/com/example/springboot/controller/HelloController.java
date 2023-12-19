@@ -1,7 +1,5 @@
 package com.example.springboot.controller;
 
-import jakarta.validation.Valid;
-
 import com.example.springboot.controller.exception.BarException;
 import com.example.springboot.controller.exception.FooException;
 import com.example.springboot.model.Meta;
@@ -9,7 +7,8 @@ import com.example.springboot.service.HelloService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import lombok.extern.log4j.Log4j2;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,7 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-@Log4j2
+@Slf4j
 @RestController
 @RequestMapping(value = "/api/v1")
 public class HelloController {
@@ -94,7 +93,7 @@ public class HelloController {
 		List<Meta>  all = null;
 		try {
 			all = service.getAll();
-			log.debug("-> items: " + all.size());
+			log.debug("-> items: {}", all.size());
 		}
 		catch (Exception ex)
 		{
@@ -115,7 +114,7 @@ public class HelloController {
 		try {
 			m = service.getById(objectId);
 			if (m != null) {
-				log.debug("Meta found with objectId=" + objectId + " blob=" + m.getBlob());
+				log.debug("Meta found with objectId={} blob={}", + objectId, m.getBlob());
 				return new ResponseEntity<Object>(m, HttpStatus.OK);
 			}
 		}
