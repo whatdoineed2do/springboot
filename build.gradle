@@ -59,6 +59,12 @@ bootJar {
     }
 }
 
+/* useful options:
+  gradle bootRun --args="--server.port=8099 --spring.profiles.active=dev"
+bootRun (
+}
+*/
+
 docker {
 	name "${project.name}:${project.version}"
 	files '${project.name}.jar'
