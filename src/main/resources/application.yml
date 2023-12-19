@@ -6,7 +6,15 @@ logging:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %10.10t [%40.-40logger{39}] ${LOG_LEVEL_PATTERN:%5.-5p} - %m%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %5level %logger{15} - %msg%n"
 file: ./logs/application.log
+
 spring:
   mvc:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+

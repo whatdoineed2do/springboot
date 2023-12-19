@@ -36,6 +36,12 @@ test {
 	useJUnitPlatform()
 }
 
+springBoot {
+  // http://localhost:8080/actuator/info incl build time info
+  buildInfo()
+}
+
+
 // the default 'jar' task will create non-fat jar; use bootJar instead 
 /*
 jar {
