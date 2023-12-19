@@ -17,4 +17,8 @@ management:
     web:
       exposure:
         include: '*'
-
+# allows us to programmatically and dynamically set logging levels to specific values
+# curl -s http://localhost:8080/actuator/loggers
+# curl -i -X POST -H 'Content-Type: application/json' -d '{"configuredLevel": "TRACE"}' http://localhost:8080/actuator/loggers/com.example.springboot.controller.HelloController
+    loggers:
+      enabled: true
