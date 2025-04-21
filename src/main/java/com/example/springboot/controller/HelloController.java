@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -23,6 +22,7 @@ import java.util.List;
 @RequestMapping(value = "/api/v1")
 public class HelloController {
 	private long  roll = 0;
+	private long  pingCount = 0;
 
 	@Autowired
 	private HelloService service;
@@ -33,7 +33,10 @@ public class HelloController {
 	public String ping()
 	{
 		log.info("ping");
-		return "pong";
+		if (++pingCount%3 == 0) {
+			throw new ArithmeticException("bad pong");
+		}
+		return "{ \"status\": 200, \"message\": \"pong\" }";
 	}
 
 	@Operation(summary = "tests error response from server")
@@ -51,6 +54,7 @@ public class HelloController {
 	}
 
 
+	//  curl -X POST -i localhost:8080/api/v1/objects/1234 --data '{ "what": "onetwofreetfour" }' -H "Content-Type: application/json"
 	@Operation(summary = "add new object")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "add blob"),
@@ -59,31 +63,25 @@ public class HelloController {
 			@ApiResponse(responseCode = "501", description = "when objectId == 666")
 	} )
 	@RequestMapping(path = "/objects/{objectId}", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<Object> postObject(
+	public Meta postObject(
 			@PathVariable("objectId")                    Long objectId,
 			@Valid @RequestBody                          String blob,
-			@Valid @RequestHeader(name = "Content-Type", required = false) String content_type)
+			@Valid @RequestHeader(name = "Content-Type", required = false) String content_type) throws FooException  // need to add this as its checked (unchecked are ok)
 	{
-		try {
-			log.info("POST /api/objects -> " + objectId + "  content-type=" + content_type);
-			final int  ret = service.addObject(objectId, blob);
-			if (ret < 0) {
-				log.warn("not impl -> " + objectId);
-				return new ResponseEntity<Object>("rejecting " + objectId, HttpStatus.NOT_IMPLEMENTED);
-			}
-			else if (ret > 0) {
-				log.info("bad request -> " + objectId);
-				// return ResponseEntity.badRequest().build();
-				return new ResponseEntity<Object>("duplicate", HttpStatus.NOT_IMPLEMENTED);
-			}
+		log.info("POST /api/objects -> {}  content-type {}", objectId, content_type);
+		final var  m = new Meta(objectId, blob);
+		final int  ret = service.addObject(m.getObjectId(), m.getBlob());
+		if (ret < 0) {
+			log.warn("not impl -> " + objectId);
+			throw new UnsupportedOperationException("not implemented");
+		}
+		if (ret > 0) {
+			log.info("bad request -> " + objectId);
+			throw new IllegalStateException("bad request");
+		}
 
-			log.info("ok -> " + objectId);
-			return ResponseEntity.ok().build();
-		}
-		catch (Exception ex) {
-			log.error("internal error -> " + objectId);
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		log.info("ok -> " + objectId);
+		return m;
 	}
 
 	@RequestMapping(value = "/objects", method = RequestMethod.GET)
@@ -132,4 +130,10 @@ public class HelloController {
 		// the exception handler can be used to consolidate all handling based on thrown exception types
 		throw new IndexOutOfBoundsException("Meta not found");
 	}
+
+	@RequestMapping(value = "/exception/notimplemented", method = RequestMethod.GET)
+	@ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
+	/* no exception is thrown, its a straight not impl back to client */
+	public void exceptionNotImpl()
+	{ }
 }
