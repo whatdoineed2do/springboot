@@ -97,7 +97,7 @@ automatically added by Spring Boot. It sorts them and prints them out.
 To run the application, run the following command in a terminal window (in the `complete`)
 directory:
 ```
-./gradlew bootRun
+./gradlew bootRun --args="--server.port=8080 --app_loglevel=DEBUG --app.controller.enable=true"
 ```
 If you use Maven, run the following command in a terminal window (in the `complete`)
 directory:
