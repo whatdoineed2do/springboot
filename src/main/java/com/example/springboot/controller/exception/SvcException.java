@@ -1,4 +1,4 @@
 package com.example.springboot.controller.exception;
 
-public class SvcException extends Exception {
+public class SvcException extends RuntimeException {
 }

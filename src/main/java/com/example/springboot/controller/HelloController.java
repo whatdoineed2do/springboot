@@ -68,7 +68,7 @@ public class HelloController {
 	public Meta postObject(
 			@PathVariable("objectId")                    Long objectId,
 			@Valid @RequestBody                          String blob,
-			@Valid @RequestHeader(name = "Content-Type", required = false) String content_type) throws FooException  // need to add this as its checked (unchecked are ok)
+			@Valid @RequestHeader(name = "Content-Type", required = false) String content_type)
 	{
 		log.info("POST /api/objects -> {}  content-type {}", objectId, content_type);
 		final var  m = new Meta(objectId, blob);
