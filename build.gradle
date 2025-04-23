@@ -1,12 +1,11 @@
 plugins {
-	id 'org.springframework.boot' version '3.1.6'
+	id 'org.springframework.boot' version "${springbootVersion}"
 	id "com.palantir.docker" version "0.35.0"
 	id 'java'
 }
 
 group = 'com.example'
 version = '0.0.1'
-// sourceCompatibility = '1.11'
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
@@ -14,22 +13,24 @@ repositories {
 	mavenCentral()
 }
 
+apply plugin: 'io.spring.dependency-management'
+
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-actuator:3.1.6'
-	implementation 'org.springframework.boot:spring-boot-starter-web:3.1.6'
-	implementation 'org.springframework.boot:spring-boot-starter-validation:3.1.6'
-	implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
+	implementation "org.springframework.boot:spring-boot-starter-actuator:${springbootVersion}"
+	implementation "org.springframework.boot:spring-boot-starter-web:${springbootVersion}"
+	implementation "org.springframework.boot:spring-boot-starter-validation:${springbootVersion}"
+	implementation "org.springdoc:springdoc-openapi-ui:${springopenapiVersion}"
 
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-gradle-plugin
-	implementation 'org.springframework.boot:spring-boot-gradle-plugin:3.1.6'
+	implementation "org.springframework.boot:spring-boot-gradle-plugin:${springbootVersion}"
 
-	testImplementation('org.springframework.boot:spring-boot-starter-test:3.1.6')
+	testImplementation "org.springframework.boot:spring-boot-starter-test:${springbootVersion}"
 
-	compileOnly 'org.projectlombok:lombok:1.18.20'
-	annotationProcessor 'org.projectlombok:lombok:1.18.20'
+	compileOnly "org.projectlombok:lombok:${lombokVersion}"
+	annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
-	testCompileOnly 'org.projectlombok:lombok:1.18.20'
-	testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
+	testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+	testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 }
 
 test {
