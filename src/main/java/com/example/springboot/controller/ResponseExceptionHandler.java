@@ -57,25 +57,6 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler
     }
 
     @Override
-    protected ResponseEntity<Object> handleBindException(final BindException ex,
-                                                         final HttpHeaders headers,
-                                                         final HttpStatusCode status,
-                                                         final WebRequest request)
-    {
-        log.info("error: " + ex.getClass().getName());
-        //
-        final List<String> errors = new ArrayList<String>();
-        for (final FieldError error : ex.getBindingResult().getFieldErrors()) {
-            errors.add(error.getField() + ": " + error.getDefaultMessage());
-        }
-        for (final ObjectError error : ex.getBindingResult().getGlobalErrors()) {
-            errors.add(error.getObjectName() + ": " + error.getDefaultMessage());
-        }
-        final ApiError apiError = new ApiError(request, HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
-        return handleExceptionInternal(ex, apiError, headers, apiError.getHttpStatus(), request);
-    }
-
-    @Override
     protected ResponseEntity<Object> handleTypeMismatch(final TypeMismatchException ex,
                                                         final HttpHeaders headers,
                                                         final HttpStatusCode status,
