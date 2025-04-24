@@ -51,8 +51,8 @@ public class HelloController {
 	{
 		log.info("GET  rolling dice...");
 		if (roll++%2 == 0)
-			throw new FooException();
-		throw new BarException();
+			throw new FooException(roll);
+		throw new BarException(roll);
 	}
 
 
