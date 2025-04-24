@@ -14,7 +14,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -218,25 +217,30 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getHttpStatus());
     }
 
+    private ResponseEntity<Object>  returnRespEntity(final SvcException ex, ApiError error)
+    {
+        var hdrs = new HttpHeaders();
+        hdrs.set("X-svc-id", Long.toString(ex.getId()));
+        return new ResponseEntity<Object>(error, hdrs, error.getHttpStatus());
+    }
+
 
     @ExceptionHandler({ FooException.class })
-    public ResponseEntity<Object> handleFoo(final Exception ex,
+    public ResponseEntity<Object> handleFoo(final SvcException ex,
                                             HttpServletRequest request,
                                             HandlerMethod handlerMethod)
     {
         log.info("error: {} - {}", request.getRequestURI(), ex.getMessage());
         //
-        final ApiError apiError = new ApiError(request, HttpStatus.BAD_REQUEST, ex.getMessage(), "Foo Exception -> BAD_REQUEST");
-        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getHttpStatus());
+        return returnRespEntity(ex, new ApiError(request, HttpStatus.BAD_REQUEST, ex.getMessage(), "Foo Exception -> BAD_REQUEST"));
     }
 
     @ExceptionHandler({
             BarException.class
     })
-    public ResponseEntity<Object> handleBar(final Exception ex, final WebRequest request) {
+    public ResponseEntity<Object> handleBar(final SvcException ex, final WebRequest request) {
         log.info("error: {} - {} - {}", request.getContextPath(), ex.getClass().getName(), ex);
         //
-        final ApiError apiError = new ApiError(request, HttpStatus.I_AM_A_TEAPOT, ex.getMessage(), "Bar Exception -> TEAPOT");
-        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getHttpStatus());
+        return returnRespEntity(ex, new ApiError(request, HttpStatus.I_AM_A_TEAPOT, ex.getMessage(), "Bar Exception -> TEAPOT"));
     }
 }
