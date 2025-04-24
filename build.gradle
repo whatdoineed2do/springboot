@@ -1,6 +1,7 @@
 plugins {
 	id 'org.springframework.boot' version "${springbootVersion}"
 	id "com.palantir.docker" version "0.35.0"
+	id 'application'
 	id 'java'
 }
 
@@ -23,6 +24,8 @@ dependencies {
 
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-gradle-plugin
 	implementation "org.springframework.boot:spring-boot-gradle-plugin:${springbootVersion}"
+
+	implementation 'io.micrometer:micrometer-registry-prometheus'
 
 	testImplementation "org.springframework.boot:spring-boot-starter-test:${springbootVersion}"
 
