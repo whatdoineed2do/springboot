@@ -38,6 +38,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
             if (svcid == null) svcid = "n/a";
 
             log.info("{}", new JSONObject(Map.of(
+                    "requestId", request.getAttribute("requestId"),
                     "svcId", svcid,
                     "timestamp", Instant.now().toString(),
                     "level", "INFO",
