@@ -25,7 +25,7 @@ public class RequestIdFilter extends OncePerRequestFilter {
         MDC.put("requestId", requestId);
 
         try {
-            log.info("request ID: {}", requestId);
+            log.debug("request ID: {}", requestId);
             request.setAttribute("requestId", requestId);
 
             // You can access the same UUID anywhere during this request
@@ -39,6 +39,6 @@ public class RequestIdFilter extends OncePerRequestFilter {
 
     private void processRequest(HttpServletRequest request) {
         String currentRequestId = MDC.get("requestId");
-        log.info("processRequest - requestId: {}", currentRequestId);
+        log.debug("processRequest - requestId: {}", currentRequestId);
     }
 }
