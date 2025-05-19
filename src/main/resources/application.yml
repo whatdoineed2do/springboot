@@ -12,6 +12,8 @@ spring:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
 
+springdoc.show-actuator: true
+
 management:
   endpoints:
     web:

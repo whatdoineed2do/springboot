@@ -21,7 +21,7 @@ dependencies {
 	implementation "org.springframework.boot:spring-boot-starter-actuator:${springbootVersion}"
 	implementation "org.springframework.boot:spring-boot-starter-web:${springbootVersion}"
 	implementation "org.springframework.boot:spring-boot-starter-validation:${springbootVersion}"
-	implementation "org.springdoc:springdoc-openapi-ui:${springopenapiVersion}"
+	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springopenapiVersion}"
 
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-gradle-plugin
 	implementation "org.springframework.boot:spring-boot-gradle-plugin:${springbootVersion}"

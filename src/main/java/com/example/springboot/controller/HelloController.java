@@ -7,6 +7,7 @@ import com.example.springboot.service.HelloService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/v1")
 @ConditionalOnProperty(name = "app.controller.enable", havingValue = "true", matchIfMissing = true)  // feature toggle
+@Tag(name = "HelloController", description = "Hello world controller")
 public class HelloController {
 	private long  roll = 0;
 	private long  pingCount = 0;
@@ -29,7 +31,7 @@ public class HelloController {
 	@Autowired
 	private HelloService service;
 
-	@Operation(summary = "dummy endpoint")
+	@Operation(summary = "dummy endpoint", description = "returns pong every 3rd time otherwise throws exception")
 	@ApiResponse(responseCode = "200", description = "no content")
 	@RequestMapping(value = "/ping", method = RequestMethod.GET)
 	public String ping()
@@ -41,7 +43,7 @@ public class HelloController {
 		return "{ \"status\": 200, \"message\": \"pong\" }";
 	}
 
-	@Operation(summary = "tests error response from server")
+	@Operation(summary = "tests error response from server", description = "throws FooException or BarException depending on the roll")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "400", description = "even invocations"),
 			@ApiResponse(responseCode = "418", description = "odd invocations")
@@ -57,7 +59,7 @@ public class HelloController {
 
 
 	//  curl -X POST -i localhost:8080/api/v1/objects/1234 --data '{ "what": "onetwofreetfour" }' -H "Content-Type: application/json"
-	@Operation(summary = "add new object")
+	@Operation(summary = "add new object", description = "adds a new object to internal ephemeral store")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "add blob"),
 			@ApiResponse(responseCode = "400", description = "duplicate"),
@@ -136,6 +138,7 @@ public class HelloController {
 	@RequestMapping(value = "/exception/notimplemented", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
 	/* no exception is thrown, its a straight not impl back to client */
+	@Operation(summary = "not implemented", description = "not implemented, always returns 501")
 	public void exceptionNotImpl()
 	{ }
 }
