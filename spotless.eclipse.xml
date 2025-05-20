@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://github.com/eclipse-jdt/eclipse.jdt.core/blob/master/org.eclipse.jdt.core/formatter/org/eclipse/jdt/internal/formatter/DefaultCodeFormatterOptions.java -->
+<profiles version="12">
+  <profile kind="CodeFormatterProfile" name="CustomAllman" version="12">
+    <setting id="org.eclipse.jdt.core.formatter.tabulation.char" value="space"/>
+    <setting id="org.eclipse.jdt.core.formatter.tabulation.size" value="4"/>
+
+    <!-- Braces on next line -->
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_method_declaration" value="next_line"/>
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_type_declaration" value="next_line"/>
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_constructor_declaration" value="next_line"/>
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_block" value="next_line"/>
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_switch" value="next_line"/>
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_annotation_type_declaration" value="next_line"/>
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_enum_declaration" value="next_line"/>
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_enum_constant" value="next_line"/>
+
+    <setting id="org.eclipse.jdt.core.formatter.insert_new_line_before_catch_in_try_statement" value="true"/>
+    <setting id="org.eclipse.jdt.core.formatter.insert_new_line_before_else_in_if_statement" value="true"/>
+
+    <!-- Method chaining alignment -->
+    <setting id="org.eclipse.jdt.core.formatter.alignment_for_selector_in_method_invocation" value="48"/>
+    <!-- 48 = WRAP_ALWAYS + INDENT_ON_COLUMN -->
+
+    <!-- Align method arguments and parameters -->
+    <setting id="org.eclipse.jdt.core.formatter.alignment_for_parameters_in_method_declaration" value="80"/>
+    <setting id="org.eclipse.jdt.core.formatter.alignment_for_arguments_in_method_invocation" value="16"/>
+
+    <!-- Optional: Class declarations, switch cases, etc. -->
+    <setting id="org.eclipse.jdt.core.formatter.align_variable_declarations_on_columns" value="true"/>
+    <setting id="org.eclipse.jdt.core.formatter.align_type_members_on_columns" value="true"/>
+    <setting id="org.eclipse.jdt.core.formatter.format_guardian_clause_on_one_line" value="false"/>
+  </profile>
+</profiles>
+

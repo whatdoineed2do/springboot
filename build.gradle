@@ -4,6 +4,7 @@ plugins {
 	id 'application'
 	id 'java'
 	id "com.gorylenko.gradle-git-properties" version "2.5.0"
+	id "com.diffplug.spotless" version "7.0.3"
 }
 
 group = 'com.example'
@@ -75,4 +76,22 @@ bootRun (
 docker {
 	name "${project.name}:${project.version}"
 	files '${project.name}.jar'
+}
+
+spotless {
+   java {
+      target fileTree('.') {
+            include '**/*.java'
+            exclude '**/build/**', '**/build-*/**', '**/bin/**'
+      }
+      /*
+      toggleOffOn()
+      googleJavaFormat().aosp().reorderImports(false)
+      removeUnusedImports()
+      trimTrailingWhitespace()
+      endWithNewline()
+      */
+      eclipse().configFile('spotless.eclipse.xml')
+      trimTrailingWhitespace()
+   }
 }
