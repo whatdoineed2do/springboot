@@ -230,9 +230,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler
 
     private ResponseEntity<Object> returnRespEntity(final SvcException ex, ApiError error)
     {
-        var hdrs = new HttpHeaders();
-        hdrs.set("X-svc-id", Long.toString(ex.getId()));
-        return new ResponseEntity<Object>(error, hdrs, error.getHttpStatus());
+        return new ResponseEntity<Object>(error, error.getHttpStatus());
     }
 
     @ExceptionHandler({FooException.class})

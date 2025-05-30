@@ -20,27 +20,16 @@ public class RequestIdFilter extends OncePerRequestFilter
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException
     {
-        String requestId = PrefixedUuid.generate("req");
-        MDC.put("requestId", requestId);
+        String requestId = PrefixedUuid.generate("txn");
+        MDC.put("txnId", requestId);
 
         try
         {
-            log.debug("request ID: {}", requestId);
-            request.setAttribute("requestId", requestId);
-
-            // You can access the same UUID anywhere during this request
-            processRequest(request);
-
+            log.debug("txn ID: {}", requestId);
             filterChain.doFilter(request, response);
         } finally
         {
             MDC.clear();
         }
-    }
-
-    private void processRequest(HttpServletRequest request)
-    {
-        String currentRequestId = MDC.get("requestId");
-        log.debug("processRequest - requestId: {}", currentRequestId);
     }
 }

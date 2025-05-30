@@ -4,15 +4,17 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.time.Instant;
-import java.util.Map;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerMapping;
+
+import java.io.IOException;
+import java.time.Instant;
+import java.util.Map;
 
 @Component
 public class RequestLoggingFilter extends OncePerRequestFilter
@@ -28,6 +30,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter
         try
         {
             filterChain.doFilter(request, response);
+            response.setHeader("X-txn-id", MDC.get("txnId"));
         } finally
         {
             long   duration = System.currentTimeMillis() - startTime;
@@ -43,7 +46,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter
             log
                     .info("{}",
                             new JSONObject(Map
-                                    .of("requestId", request.getAttribute("requestId"), "svcId", svcid, "timestamp",
+                                    .of("txnId", MDC.get("txnId"), "svcId", svcid, "timestamp",
                                             Instant.now().toString(), "level", "INFO", "method", method, "uri",
                                             uri != null ? uri : request.getRequestURI(), "status", status, "durationMs",
                                             duration, "clientIp", clientIp, "message", "Request completed")));
