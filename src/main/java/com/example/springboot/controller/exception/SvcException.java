@@ -6,7 +6,8 @@ import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
-public class SvcException extends RuntimeException {
+public class SvcException extends RuntimeException
+{
     @Getter
-    private long  id;
+    private long id;
 }

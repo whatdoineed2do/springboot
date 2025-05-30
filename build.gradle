@@ -89,9 +89,9 @@ spotless {
       googleJavaFormat().aosp().reorderImports(false)
       removeUnusedImports()
       trimTrailingWhitespace()
-      endWithNewline()
       */
       eclipse().configFile('spotless.eclipse.xml')
       trimTrailingWhitespace()
+      endWithNewline()
    }
 }
