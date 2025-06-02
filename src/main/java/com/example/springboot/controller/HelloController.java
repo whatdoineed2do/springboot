@@ -9,15 +9,18 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.concurrent.*;
 
 @Slf4j
 @Validated
@@ -30,8 +33,23 @@ public class HelloController
     private long         roll      = 0;
     private long         pingCount = 0;
 
-    @Autowired
     private HelloService service;
+
+    private int          poolsize;
+    private int          maxpoolsize;
+    ExecutorService      executor;
+
+    public HelloController(HelloService service, @Value("${app.controller.poolsize:2}") int poolsize,
+            @Value("${app.controller.maxpoolsize:1000}") int maxpoolsize)
+    {
+        this.service = service;
+        this.poolsize = poolsize;
+        this.maxpoolsize = maxpoolsize;
+
+        log.info("HelloController initialized with poolsize: {} (max {})", poolsize, maxpoolsize);
+        executor = new ThreadPoolExecutor(poolsize, maxpoolsize, 60L, TimeUnit.SECONDS,
+                new SynchronousQueue<Runnable>());
+    }
 
     @Operation(summary = "dummy endpoint", description = "returns pong every 3rd time otherwise throws exception")
     @ApiResponse(responseCode = "200", description = "no content")
@@ -151,5 +169,45 @@ public class HelloController
     @Operation(summary = "not implemented", description = "not implemented, always returns 501")
     public void exceptionNotImpl()
     {
+    }
+
+    static String doWork(String name)
+    {
+        try
+        {
+            // simulate variable delay
+            Thread.sleep(name.equals("taskB") ? 1000 : 200);
+        } catch (InterruptedException e)
+        {
+            Thread.currentThread().interrupt();
+        }
+        return "Completed " + name;
+    }
+
+    @RequestMapping(value = "/async", method = RequestMethod.GET)
+    public List<String> async()
+    {
+        var                             taskNames = List.of("taskA", "taskB", "taskC");
+
+        List<CompletableFuture<String>> futures   = taskNames
+                .stream()
+                .map(taskName -> CompletableFuture
+                        .supplyAsync(() -> doWork(taskName), executor)
+                        .completeOnTimeout("Timeout from " + taskName, 400, TimeUnit.MILLISECONDS)
+                        .exceptionally(ex -> {
+                                                                      log
+                                                                              .error("Error in " + taskName + ": "
+                                                                                      + ex.getMessage());
+                                                                      return "Fallback from " + taskName;
+                                                                  }))
+                .toList();
+
+        log.info("Waiting for tasks to complete...");
+        List<String> results = futures.stream().map(CompletableFuture::join).toList();
+
+        results.forEach(log::info);
+
+        executor.shutdown();
+        return results;
     }
 }
