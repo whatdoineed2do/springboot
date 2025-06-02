@@ -17,6 +17,7 @@ repositories {
 }
 
 apply plugin: 'io.spring.dependency-management'
+compileJava.finalizedBy 'spotlessApply'
 
 dependencies {
 	implementation "org.springframework.boot:spring-boot-starter-actuator:${springbootVersion}"
