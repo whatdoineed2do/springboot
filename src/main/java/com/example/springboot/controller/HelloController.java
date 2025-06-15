@@ -34,21 +34,19 @@ import java.util.stream.IntStream;
 @RequestMapping(value = "/api/v1")
 @ConditionalOnProperty(name = "app.controller.enable", havingValue = "true", matchIfMissing = true) // feature toggle
 @Tag(name = "HelloController", description = "Hello world controller")
-public class HelloController
-{
-    private long         roll      = 0;
-    private long         pingCount = 0;
+public class HelloController {
+    private long roll = 0;
+    private long pingCount = 0;
 
     private final Secrets secrets;
     private HelloService service;
 
-    private int          poolsize;
-    private int          maxpoolsize;
-    ExecutorService      executor;
+    private int poolsize;
+    private int maxpoolsize;
+    ExecutorService executor;
 
     public HelloController(HelloService service, Secrets secrets, @Value("${app.controller.poolsize:2}") int poolsize,
-            @Value("${app.controller.maxpoolsize:1000}") int maxpoolsize)
-    {
+                           @Value("${app.controller.maxpoolsize:1000}") int maxpoolsize) {
         this.secrets = secrets;
         this.service = service;
         this.poolsize = poolsize;
@@ -62,11 +60,9 @@ public class HelloController
     @Operation(summary = "dummy endpoint", description = "returns pong every 3rd time otherwise throws exception")
     @ApiResponse(responseCode = "200", description = "no content")
     @RequestMapping(value = "/ping", method = RequestMethod.GET)
-    public String ping()
-    {
+    public String ping() {
         log.info("ping");
-        if (++pingCount % 3 == 0)
-        {
+        if (++pingCount % 3 == 0) {
             throw new ArithmeticException("bad pong");
         }
         return "{ \"status\": 200, \"message\": \"pong\" }";
@@ -76,8 +72,7 @@ public class HelloController
     @ApiResponses(value = {@ApiResponse(responseCode = "400", description = "even invocations"),
             @ApiResponse(responseCode = "418", description = "odd invocations")})
     @RequestMapping(path = "/roll/dice", method = RequestMethod.GET)
-    public void rollDice() throws FooException, BarException
-    {
+    public void rollDice() throws FooException, BarException {
         log.info("GET  rolling dice...");
         if (roll++ % 2 == 0)
             throw new FooException(roll);
@@ -95,19 +90,16 @@ public class HelloController
     @RequestMapping(path = "/objects/{objectId}", method = RequestMethod.POST, consumes = {
             MediaType.APPLICATION_JSON_VALUE})
     public Meta postObject(@PathVariable("objectId") Long objectId,
-            @Valid @RequestBody String blob,
-            @Valid @RequestHeader(name = "Content-Type", required = false) String content_type)
-    {
+                           @Valid @RequestBody String blob,
+                           @Valid @RequestHeader(name = "Content-Type", required = false) String content_type) {
         log.info("POST /api/objects -> {}  content-type {}", objectId, content_type);
-        final var m   = new Meta(objectId, blob);
+        final var m = new Meta(objectId, blob);
         final int ret = service.addObject(m.getObjectId(), m.getBlob());
-        if (ret < 0)
-        {
+        if (ret < 0) {
             log.warn("not impl -> " + objectId);
             throw new UnsupportedOperationException("not implemented");
         }
-        if (ret > 0)
-        {
+        if (ret > 0) {
             log.info("bad request -> " + objectId);
             throw new IllegalStateException("bad request");
         }
@@ -117,16 +109,13 @@ public class HelloController
     }
 
     @RequestMapping(value = "/objects", method = RequestMethod.GET)
-    public ResponseEntity<Object> getObjects()
-    {
+    public ResponseEntity<Object> getObjects() {
         log.info("GET  /objects");
         List<Meta> all = null;
-        try
-        {
+        try {
             all = service.getAll();
             log.debug("-> items: {}", all.size());
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
             // can throw or return - the ResponseExceptionHandler can map
             return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -136,28 +125,23 @@ public class HelloController
     @RequestMapping(value = "/objects/{objectId}", method = RequestMethod.GET)
     public ResponseEntity<Object> getObject(
             @RequestParam(name = "fail_404", defaultValue = "no", required = false) String fail_404,
-            @PathVariable Long objectId)
-    {
+            @PathVariable Long objectId) {
         log.info("GET  /api/objects -> " + objectId);
 
         Meta m = null;
-        try
-        {
+        try {
             m = service.getById(objectId);
-            if (m != null)
-            {
+            if (m != null) {
                 log.debug("Meta found with objectId={} blob={}", +objectId, m.getBlob());
                 return new ResponseEntity<Object>(m, HttpStatus.OK);
             }
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
             log.error("Error search for " + objectId, ex, ex.getMessage());
             return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         String err404 = "{ \"response\": \"Meta + " + objectId + " not found\" }";
-        if (fail_404.equals("no"))
-        {
+        if (fail_404.equals("no")) {
             return new ResponseEntity<Object>(err404, HttpStatus.NOT_FOUND);
         }
 
@@ -175,18 +159,14 @@ public class HelloController
     @ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
     /* no exception is thrown, its a straight not impl back to client */
     @Operation(summary = "not implemented", description = "not implemented, always returns 501")
-    public void exceptionNotImpl()
-    {
+    public void exceptionNotImpl() {
     }
 
-    static String doWork(String name)
-    {
-        try
-        {
+    static String doWork(String name) {
+        try {
             // simulate variable delay
             Thread.sleep(name.equals("Task1") ? 1000 : 200);
-        } catch (InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
         return "Completed " + name;
@@ -194,16 +174,15 @@ public class HelloController
 
     @RequestMapping(value = "/async", method = RequestMethod.GET)
     public List<String> async(@RequestParam(name = "tasks", defaultValue = "3", required = false)
-                                  @Min(value = 1, message = "tasks must be 1 or more")
-                                  @Max(value = 100, message = "tasks can not exceed 100") Integer tasks)
-    {
+                              @Min(value = 1, message = "tasks must be 1 or more")
+                              @Max(value = 100, message = "tasks can not exceed 100") Integer tasks) {
         log.info("requested {} async tasks", () -> tasks);
 
-        final var                             taskNames = IntStream.range(0, tasks)
+        final var taskNames = IntStream.range(0, tasks)
                 .mapToObj(i -> "Task" + i)
                 .toList();
 
-        List<CompletableFuture<String>> futures   = taskNames
+        List<CompletableFuture<String>> futures = taskNames
                 .stream()
                 .map(taskName -> {
                     while (true) {
@@ -231,22 +210,24 @@ public class HelloController
                     }
                 }).toList();
 
-    log.info("Waiting for tasks to complete...");
-    List<String> results = futures.stream().map(CompletableFuture::join).toList();
+        log.info("Waiting for tasks to complete...");
+        List<String> results = futures.stream().map(CompletableFuture::join).toList();
 
-    results.forEach(log::info);
+        results.forEach(log::info);
 
-    executor.shutdown();return results;
-}
-        @GetMapping(value = "/secrets")
-        public Object secrets() {
-            log.info("secrets -> {}", secrets.getLastUpdated());
-            // cheap out messing with the proxing of the Secrets class
-            return Map.ofEntries(
+        executor.shutdown();
+        return results;
+    }
+
+    @GetMapping(value = "/secrets")
+    public Object secrets() {
+        log.info("secrets -> {}", secrets.getLastUpdated());
+        // cheap out messing with the proxing of the Secrets class
+        return Map.ofEntries(
                 Map.entry("dbUsername", secrets.getDbUsername()),
                 Map.entry("dbPassword", secrets.getDbPassword()),
                 Map.entry("lastUpdated",
                         DateTimeFormatter.ISO_INSTANT.format(Instant.ofEpochMilli(secrets.getLastUpdated())))
-            );
-        }
+        );
+    }
 }

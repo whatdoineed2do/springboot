@@ -14,9 +14,10 @@ public class ConfigRefreshListener implements ApplicationListener<RefreshScopeRe
     public void onApplicationEvent(RefreshScopeRefreshedEvent event)
     {
         log.info("Configuration scope has been refreshed");
-        /* You can add additional logic here if needed, such as logging or notifying other components
-         * NB: not necessary to refresh beans manually (ie Secrets.java and its @Value members), as
-         * they will be refreshed automatically
+        /*
+         * You can add additional logic here if needed, such as logging or notifying
+         * other components NB: not necessary to refresh beans manually (ie Secrets.java
+         * and its @Value members), as they will be refreshed automatically
          */
     }
 }
