@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.stream.IntStream;
+import java.util.function.Supplier;
 
 @Log4j2
 @Validated
@@ -111,15 +112,15 @@ public class HelloController {
     @RequestMapping(value = "/objects", method = RequestMethod.GET)
     public ResponseEntity<Object> getObjects() {
         log.info("GET  /objects");
-        List<Meta> all = null;
         try {
-            all = service.getAll();
-            log.debug("-> items: {}", all.size());
+            final List<Meta>  all = service.getAll();
+            log.debug("-> items: {}", () -> all.size());
+
+            return new ResponseEntity<Object>(all, HttpStatus.OK);
         } catch (Exception ex) {
             // can throw or return - the ResponseExceptionHandler can map
             return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<Object>(all, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/objects/{objectId}", method = RequestMethod.GET)
@@ -128,11 +129,10 @@ public class HelloController {
             @PathVariable Long objectId) {
         log.info("GET  /api/objects -> " + objectId);
 
-        Meta m = null;
         try {
-            m = service.getById(objectId);
+            final Meta m = service.getById(objectId);
             if (m != null) {
-                log.debug("Meta found with objectId={} blob={}", +objectId, m.getBlob());
+                log.debug("Meta found with objectId={} blob={}", +objectId, (Supplier<String>)() -> m.getBlob());
                 return new ResponseEntity<Object>(m, HttpStatus.OK);
             }
         } catch (Exception ex) {
