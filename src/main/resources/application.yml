@@ -11,6 +11,15 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
+  config:
+    import:
+      - file:src/main/resources/application.yml
+      - classpath:/application.yml
+
+secrets:
+  db:
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:letmein1234}
 
 springdoc.show-actuator: true
 

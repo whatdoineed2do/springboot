@@ -1,5 +1,6 @@
 package com.example.springboot.controller;
 
+import com.example.springboot.config.Secrets;
 import com.example.springboot.controller.exception.BarException;
 import com.example.springboot.controller.exception.FooException;
 import com.example.springboot.model.Meta;
@@ -9,8 +10,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
@@ -19,10 +21,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
+import java.util.stream.IntStream;
 
-@Slf4j
+@Log4j2
 @Validated
 @RestController
 @RequestMapping(value = "/api/v1")
@@ -33,15 +39,17 @@ public class HelloController
     private long         roll      = 0;
     private long         pingCount = 0;
 
+    private final Secrets secrets;
     private HelloService service;
 
     private int          poolsize;
     private int          maxpoolsize;
     ExecutorService      executor;
 
-    public HelloController(HelloService service, @Value("${app.controller.poolsize:2}") int poolsize,
+    public HelloController(HelloService service, Secrets secrets, @Value("${app.controller.poolsize:2}") int poolsize,
             @Value("${app.controller.maxpoolsize:1000}") int maxpoolsize)
     {
+        this.secrets = secrets;
         this.service = service;
         this.poolsize = poolsize;
         this.maxpoolsize = maxpoolsize;
@@ -176,7 +184,7 @@ public class HelloController
         try
         {
             // simulate variable delay
-            Thread.sleep(name.equals("taskB") ? 1000 : 200);
+            Thread.sleep(name.equals("Task1") ? 1000 : 200);
         } catch (InterruptedException e)
         {
             Thread.currentThread().interrupt();
@@ -185,29 +193,60 @@ public class HelloController
     }
 
     @RequestMapping(value = "/async", method = RequestMethod.GET)
-    public List<String> async()
+    public List<String> async(@RequestParam(name = "tasks", defaultValue = "3", required = false)
+                                  @Min(value = 1, message = "tasks must be 1 or more")
+                                  @Max(value = 100, message = "tasks can not exceed 100") Integer tasks)
     {
-        var                             taskNames = List.of("taskA", "taskB", "taskC");
+        log.info("requested {} async tasks", () -> tasks);
+
+        final var                             taskNames = IntStream.range(0, tasks)
+                .mapToObj(i -> "Task" + i)
+                .toList();
 
         List<CompletableFuture<String>> futures   = taskNames
                 .stream()
-                .map(taskName -> CompletableFuture
-                        .supplyAsync(() -> doWork(taskName), executor)
-                        .completeOnTimeout("Timeout from " + taskName, 400, TimeUnit.MILLISECONDS)
-                        .exceptionally(ex -> {
-                                                                      log
-                                                                              .error("Error in " + taskName + ": "
-                                                                                      + ex.getMessage());
-                                                                      return "Fallback from " + taskName;
-                                                                  }))
-                .toList();
+                .map(taskName -> {
+                    while (true) {
+                        try {
+                            return CompletableFuture
+                                    .supplyAsync(() -> doWork(taskName), executor)
+                                    .completeOnTimeout("Timeout from " + taskName, 400, TimeUnit.MILLISECONDS)
+                                    .exceptionally(ex -> {
+                                        log.error("Error in " + taskName + ": " + ex.getMessage());
+                                        return "Fallback from " + taskName;
+                                    });
+                        } catch (OutOfMemoryError oom) {
+                            if (oom.getMessage() != null && oom.getMessage().contains("unable to create new native thread")) {
+                                log.warn("Thread creation failed for " + taskName + ", backing off and retrying...");
+                                try {
+                                    Thread.sleep(500); // backoff before retrying
+                                } catch (InterruptedException ie) {
+                                    Thread.currentThread().interrupt();
+                                    throw new RuntimeException("Interrupted during backoff", ie);
+                                }
+                            } else {
+                                throw oom; // rethrow other OOM errors
+                            }
+                        }
+                    }
+                }).toList();
 
-        log.info("Waiting for tasks to complete...");
-        List<String> results = futures.stream().map(CompletableFuture::join).toList();
+    log.info("Waiting for tasks to complete...");
+    List<String> results = futures.stream().map(CompletableFuture::join).toList();
 
-        results.forEach(log::info);
+    results.forEach(log::info);
 
-        executor.shutdown();
-        return results;
-    }
+    executor.shutdown();return results;
+}
+        @GetMapping(value = "/secrets")
+        public Object secrets() {
+            log.info("secrets -> {}", secrets.getLastUpdated());
+            // cheap out messing with the proxing of the Secrets class
+            return Map.ofEntries(
+                Map.entry("dbUsername", secrets.getDbUsername()),
+                Map.entry("dbPassword", secrets.getDbPassword()),
+                Map.entry("lastUpdated",
+                        DateTimeFormatter.ISO_INSTANT.format(Instant.ofEpochMilli(secrets.getLastUpdated())))
+            );
+        }
 }
