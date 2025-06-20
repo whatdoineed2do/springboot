@@ -28,6 +28,7 @@ dependencies {
 
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-gradle-plugin
 	implementation "org.springframework.boot:spring-boot-gradle-plugin:${springbootVersion}"
+	implementation "org.springframework.cloud:spring-cloud-starter-vault-config:4.3.0"
 
 	implementation 'io.micrometer:micrometer-registry-prometheus'
 

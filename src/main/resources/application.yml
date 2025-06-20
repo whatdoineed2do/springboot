@@ -15,6 +15,21 @@ spring:
     import:
       - file:src/main/resources/application.yml
       - classpath:/application.yml
+      - vault://
+  cloud:
+    vault:
+      uri: http://127.0.0.1:8200
+      token: hello
+      namespace: admin
+      authentication: TOKEN
+      kv:
+        enabled: true
+        backend: secret
+        default-context: app   # kv put secret/app username=root password=2341030
+      session.lifecycle:
+        enabled: true
+        refresh-before-expiry: 10s
+        expiry-threshold: 20s
 
 secrets:
   db:

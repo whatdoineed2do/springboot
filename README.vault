@@ -1,0 +1,11 @@
+ https://developer.hashicorp.com/vault/tutorials/app-integration/spring-reload-secrets
+
+ vault server -dev -dev-root-token-id=hello &
+
+ export VAULT_ADDR=http://localhost:8200
+ export VAULT_TOKEN=hello
+ vault kv put \
+   secret/app/stuff \
+     secret.db.user=admin \
+     secret.db.password=secret \
+     secret.api.key=1234567890
