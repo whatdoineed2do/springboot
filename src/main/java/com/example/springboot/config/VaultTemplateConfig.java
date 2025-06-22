@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 import org.springframework.vault.core.VaultKeyValueOperationsSupport;
@@ -17,6 +18,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @Log4j2
 @Getter
 @RefreshScope
+@ConditionalOnProperty(name = "app.vault.enable", havingValue = "true", matchIfMissing = false) // feature toggle
 @Component
 public class VaultTemplateConfig
 {

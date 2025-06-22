@@ -2,7 +2,7 @@ package com.example.springboot.controller;
 
 import com.example.springboot.config.VaultTemplateConfig;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +13,7 @@ import java.util.Map;
 @Log4j2
 @Validated
 @RestController
+@ConditionalOnProperty(name = "app.vault.enable", havingValue = "true", matchIfMissing = false) // feature toggle
 @RequestMapping(value = "/api/v1/vault", produces = "application/json")
 public class VaultController
 {
