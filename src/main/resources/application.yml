@@ -52,3 +52,9 @@ management:
     export:
       prometheus:
         enabled: true
+
+ssl:
+  trust-store:
+    path: classpath:keystore/keystore.jks
+    password: changeit
+    type: JKS

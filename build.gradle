@@ -30,6 +30,8 @@ dependencies {
 	implementation "org.springframework.boot:spring-boot-gradle-plugin:${springbootVersion}"
 	implementation "org.springframework.cloud:spring-cloud-starter-vault-config:4.3.0"
 
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
 	implementation 'io.micrometer:micrometer-registry-prometheus'
 
 	implementation 'org.json:json:20250107'
