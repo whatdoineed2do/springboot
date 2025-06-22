@@ -39,6 +39,9 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
+	// RestClient
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
 	implementation 'io.micrometer:micrometer-registry-prometheus'
 
 	implementation 'org.json:json:20250107'

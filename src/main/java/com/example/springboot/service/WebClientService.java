@@ -8,12 +8,12 @@ import reactor.util.retry.Retry;
 import java.time.Duration;
 
 @Service
-public class SSLWebService
+public class WebClientService
 {
 
     private final WebClient secureWebClient;
 
-    public SSLWebService(WebClient secureWebClient)
+    public WebClientService(WebClient secureWebClient)
     {
         this.secureWebClient = secureWebClient;
     }

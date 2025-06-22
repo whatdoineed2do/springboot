@@ -1,16 +1,14 @@
 package com.example.springboot.config;
 
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
-
-import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.SslContext;
-import reactor.netty.tcp.SslProvider;
 
 import javax.net.ssl.TrustManagerFactory;
 import java.io.InputStream;

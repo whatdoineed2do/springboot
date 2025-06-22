@@ -1,6 +1,7 @@
 package com.example.springboot.controller;
 
-import com.example.springboot.service.SSLWebService;
+import com.example.springboot.service.RestClientService;
+import com.example.springboot.service.WebClientService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,20 +17,29 @@ import java.util.Map;
 @RequestMapping(value = "/api/v1/ssl", produces = "application/json")
 public class SSLEndpointController
 {
-    private SSLWebService sslWebService;
+    private WebClientService  webClientService;
+    private RestClientService restClientService;
 
-    public SSLEndpointController(SSLWebService sslWebService)
+    public SSLEndpointController(WebClientService webClientService, RestClientService restClietntService)
     {
-        this.sslWebService = sslWebService;
+        this.restClientService = restClietntService;
+        this.webClientService = webClientService;
     }
 
-    @GetMapping("/endpoint")
-    public Object hit(@RequestParam(name = "uri", required = true) String path)
+    @GetMapping("/endpoint/webclient")
+    public Object hitViaWebClient(@RequestParam(name = "uri", required = true) String path)
     {
-        log.info("request for SSL {}", path);
-        return sslWebService
+        log.info("request for SSL via WebClient {}", path);
+        return webClientService
                 .fetchSecureContent(path)
                 .map(content -> Map.of("content", content))
                 .doOnError(error -> log.error("Error fetching secure content from {}: {}", path, error.getMessage()));
+    }
+
+    @GetMapping("/endpoint/restclient")
+    public Object hitViaRestClient(@RequestParam(name = "uri", required = true) String path)
+    {
+        log.info("request for SSL via RestClient {}", path);
+        return restClientService.fetchSecureContent(path);
     }
 }
