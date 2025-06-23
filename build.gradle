@@ -1,5 +1,5 @@
 plugins {
-	id 'org.springframework.boot' version "${springbootVersion}"
+	id 'org.springframework.boot' version "3.5.0"
 	id "com.palantir.docker" version "0.35.0"
 	id 'application'
 	id 'java'
@@ -16,19 +16,26 @@ repositories {
 	mavenCentral()
 }
 
+ext {
+	springbootVersion = '3.5.0'
+	lombokVersion = '1.18.28'
+	springopenapiVersion = '2.8.8'
+	springcloudVersion = '4.3.0'
+}
+
 apply plugin: 'io.spring.dependency-management'
 compileJava.finalizedBy 'spotlessApply'
 
 dependencies {
-	implementation "org.springframework.boot:spring-boot-starter-actuator:${springbootVersion}"
-	implementation "org.springframework.boot:spring-boot-starter-web:${springbootVersion}"
-	implementation "org.springframework.boot:spring-boot-starter-validation:${springbootVersion}"
+	implementation "org.springframework.boot:spring-boot-starter-actuator"
+	implementation "org.springframework.boot:spring-boot-starter-web"
+	implementation "org.springframework.boot:spring-boot-starter-validation"
 	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springopenapiVersion}"
-	implementation 'org.springframework.cloud:spring-cloud-starter:4.3.0'
+	implementation "org.springframework.cloud:spring-cloud-starter:${springcloudVersion}"
 
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-gradle-plugin
 	implementation "org.springframework.boot:spring-boot-gradle-plugin:${springbootVersion}"
-	implementation "org.springframework.cloud:spring-cloud-starter-vault-config:4.3.0"
+	implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springcloudVersion}"
 
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
@@ -36,7 +43,7 @@ dependencies {
 
 	implementation 'org.json:json:20250107'
 
-	testImplementation "org.springframework.boot:spring-boot-starter-test:${springbootVersion}"
+	testImplementation "org.springframework.boot:spring-boot-starter-test"
 
 	compileOnly "org.projectlombok:lombok:${lombokVersion}"
 	annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
