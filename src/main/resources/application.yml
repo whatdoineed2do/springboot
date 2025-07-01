@@ -58,3 +58,10 @@ ssl:
     path: classpath:keystore/keystore.jks
     password: changeit
     type: JKS
+
+app:
+  layer:
+    list:
+      - one
+      - two
+      - last
